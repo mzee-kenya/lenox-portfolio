@@ -1,0 +1,137 @@
+/* Print / Print-to-PDF fallback */
+
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11pt;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a {
+    color: #111 !important;
+  }
+
+  .navbar,
+  .navbar__toggle,
+  .navbar__right,
+  .hero__actions,
+  .hero__meta,
+  .nav__actions,
+  .resume-toolbar,
+  .resume-actions,
+  .resume-versions,
+  .resume-note,
+  .match-card,
+  .footer__social,
+  .footer__nav,
+  .footer__bottom,
+  .toast-region,
+  .modal-backdrop,
+  .skip-link {
+    display: none !important;
+  }
+
+  .footer {
+    margin-top: 0;
+    padding-block: 1rem;
+    border-top: 1px solid #ddd;
+    background: #fff !important;
+  }
+
+  .hero {
+    padding-block: 1.5rem;
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .hero__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero__monogram,
+  .hero__photo {
+    max-height: 140px;
+    color: #111;
+    background: #eee;
+    box-shadow: none;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .section--alt {
+    background: #fff !important;
+    border: 0 !important;
+  }
+
+  /* Resume sheet becomes the primary print artifact */
+  .resume-sheet {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    max-width: none;
+  }
+
+  .resume-head,
+  .resume-entry__head,
+  button,
+  .btn {
+    break-inside: avoid;
+  }
+
+  .resume-block,
+  .resume-entry,
+  .timeline__item,
+  .project-card,
+  .cert-item {
+    break-inside: avoid;
+  }
+
+  .section,
+  .section--tight,
+  .section--alt {
+    padding-block: 1.25rem;
+  }
+
+  .container {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  .section-head {
+    margin-bottom: 1rem;
+  }
+
+  .section-head h2 {
+    font-size: 18pt;
+  }
+
+  .timeline::before {
+    display: none;
+  }
+
+  .timeline__item {
+    padding-left: 0;
+  }
+
+  .timeline__node {
+    display: none;
+  }
+}
