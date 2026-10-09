@@ -2,9 +2,9 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 
-from config.views import ai_status, healthcheck, site_config
+from config.views import ai_status, healthcheck, site_config, spa_index
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -21,3 +21,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# SPA catch-all: must stay last so API/admin/static routes win.
+if settings.SPA_DIR.exists():
+    urlpatterns += [re_path(r"^.*$", spa_index, name="spa")]

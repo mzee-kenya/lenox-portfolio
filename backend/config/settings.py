@@ -26,6 +26,8 @@ DEBUG = env_bool("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 if DEBUG:
     ALLOWED_HOSTS += ["testserver", ".localhost", "localhost", "127.0.0.1"]
+else:
+    ALLOWED_HOSTS.append(".azurewebsites.net")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -116,6 +118,14 @@ STORAGES = {
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
+# --- SPA (React build) served by Django ---------------------------------------
+# At image build time the Vite output is copied to BASE_DIR/"spa". WhiteNoise
+# serves its real files (hashed assets, photos) at the site root, and the
+# catch-all view in config.urls returns index.html for client-side routes.
+SPA_DIR = BASE_DIR / "spa"
+WHITENOISE_ROOT = SPA_DIR if SPA_DIR.exists() else None
+WHITENOISE_INDEX_FILE = True
+
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -177,6 +187,8 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = "same-origin"
+# Azure App Service terminates TLS at the edge and forwards the scheme here.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 SESSION_COOKIE_SECURE = env_bool("SESSION_COOKIE_SECURE", False)
 CSRF_COOKIE_SECURE = env_bool("CSRF_COOKIE_SECURE", False)
