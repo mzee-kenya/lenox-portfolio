@@ -1,0 +1,2 @@
+# Shell scripts must use LF so they run correctly on Linux (Azure App Service).
+*.sh text eol=lf

@@ -24,10 +24,14 @@ def env_bool(name: str, default: bool = False) -> bool:
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-dev-key-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
+# Azure App Service injects WEBSITE_HOSTNAME (e.g. "myapp.azurewebsites.net").
+WEBSITE_HOSTNAME = os.getenv("WEBSITE_HOSTNAME", "")
 if DEBUG:
     ALLOWED_HOSTS += ["testserver", ".localhost", "localhost", "127.0.0.1"]
 else:
     ALLOWED_HOSTS.append(".azurewebsites.net")
+    if WEBSITE_HOSTNAME and WEBSITE_HOSTNAME not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(WEBSITE_HOSTNAME)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -94,7 +98,9 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            # On Azure App Service set SQLITE_PATH=/home/db.sqlite3 so the
+            # database lives on the persistent /home mount.
+            "NAME": os.getenv("SQLITE_PATH", BASE_DIR / "db.sqlite3"),
         }
     }
 
@@ -180,6 +186,10 @@ CSRF_TRUSTED_ORIGINS = [
     for o in os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
     if o.strip()
 ]
+if not DEBUG and WEBSITE_HOSTNAME:
+    _azure_origin = f"https://{WEBSITE_HOSTNAME}"
+    if _azure_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_azure_origin)
 
 # Security headers — enabled by default in production, relaxed in DEBUG so the
 # local dev server can load media and assets over plain HTTP.
